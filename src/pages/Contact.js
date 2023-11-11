@@ -55,6 +55,10 @@ const Container = styled.div`
     padding: 4rem;
     height: 100%;
     justify-content: center;
+
+    @media (max-width: 768px) {        
+        padding: 1rem;
+    }
 `;
 
 const PageContainer = styled.div`
