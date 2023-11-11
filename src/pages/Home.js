@@ -6,8 +6,6 @@ import EmailIcon from '@mui/icons-material/Email';
 import styled from "styled-components";
 const _ = require('lodash');
 
-
-
 function importAll(r) {
     let images = {};
     r.keys().map((item, index) => {return  images[item.replace('./', '')] = r(item); });
@@ -72,7 +70,7 @@ function Home() {
 }
 
 const Container = styled.div`
-    margin: 2rem 2rem;
+    margin: 2rem;
 
     display: flex;
     flex-direction: row;

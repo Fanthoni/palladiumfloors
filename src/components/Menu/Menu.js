@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import Menu from "@mui/material/Menu";
@@ -8,7 +9,18 @@ import { IconButton } from '@mui/material';
 
 function MenuBtn () {
     const menuOptions = [
-        "Home", "Catalog", "Contact"
+        {
+            label: "Home",
+            path: "/"
+        },
+        {
+            label: "Catalog",
+            path: "/"
+        },
+        {
+            label: "Contact",
+            path: "/contact"
+        }
     ]
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -46,10 +58,12 @@ function MenuBtn () {
             >
                 {menuOptions.map((option) => (
                     <MenuItem 
-                        key={option}
+                        key={option.label}
                         onClick={handleClose}
                     >
-                        {option}
+                        <UnstyledLink to={option.path} style={{textDecoration: "none", color: "black"}}>
+                            {option.label}
+                        </UnstyledLink> 
                     </MenuItem>
                 ))}
             </Menu>
@@ -61,4 +75,9 @@ const MenuBtnWrapper = styled.div`
     display: inline;
 `;
 
-export default MenuBtn
+const UnstyledLink = styled(Link)`
+    text-decoration: none;
+    color: black;
+`;
+
+export default MenuBtn;

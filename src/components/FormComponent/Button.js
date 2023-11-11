@@ -12,5 +12,6 @@ const Submit = styled.input`
     border: none;
     height: 3em;
     cursor: pointer;
+    border-radius: 20px;
 `;
 export { SubmitButton };
