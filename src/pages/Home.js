@@ -256,6 +256,7 @@ function Gallery({items}) {
                             <img className="galleryImage" src={image} key={index} alt="gallery"/>
                     )
                 }
+                return null;
             })}
         </GalleryCardContainer>
     );
