@@ -22,12 +22,7 @@ function Home() {
   galleryImages = _.values(galleryImages);
 
   return (
-    <div
-      style={{
-        justifyContent: "center",
-        display: "flex",
-      }}
-    >
+    <ContainerWrapper>
       <Container>
         <PageContainer>
           <NavigationContainer>
@@ -97,12 +92,19 @@ function Home() {
             />
           </SliderContainer>
         </PageContainer>
-        <GalleryContainer></GalleryContainer>
-        <Gallery items={galleryImages} />
+        <GalleryContainer>
+          <Gallery items={galleryImages} />
+        </GalleryContainer>
       </Container>
-    </div>
+    </ContainerWrapper>
   );
 }
+
+const ContainerWrapper = styled.div`
+  justify-content: center;
+  display: flex;
+  margin: 2em;
+`;
 
 const Container = styled.div`
   margin: 2rem;
@@ -110,7 +112,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  gap: 20px;
+  gap: 2rem;
   max-width: 1000px;
 
   @media (max-width: 768px) {
@@ -185,7 +187,7 @@ const GalleryContainer = styled.div`
   width: 50%;
 
   @media (max-width: 768px) {
-    transform: translate(-10px);
+    // transform: translate(-10px);
   }
 `;
 
