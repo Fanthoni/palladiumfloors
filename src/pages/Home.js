@@ -55,6 +55,9 @@ function Home() {
                   },
                 }}
                 className="contact-btn"
+                onClick={() => {
+                  window.open("tel:123-456-7890");
+                }}
               >
                 Call Now
               </Button>
@@ -67,6 +70,9 @@ function Home() {
                   },
                 }}
                 className="contact-btn"
+                onClick={() => {
+                  window.open("mailto:contact@palladiumfloors.com");
+                }}
               >
                 <EmailIcon />
               </Button>
@@ -185,10 +191,6 @@ const SliderContainer = styled.div`
 
 const GalleryContainer = styled.div`
   width: 50%;
-
-  @media (max-width: 768px) {
-    // transform: translate(-10px);
-  }
 `;
 
 function FlooringCard({ backgroundImage, title, href }) {
