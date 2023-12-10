@@ -1,192 +1,288 @@
-import styled from "styled-components";
-import { useState } from "react";
-
-import InputLabel from "@mui/material/InputLabel";
+import logo from "../assets/logo.png";
+import Menu from "../components/Menu";
 import Select from "@mui/material/Select";
-import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
-const mockData = [
-  {
-    type: "Solid Hardwood",
-    items: [
-      {
-        series: "Imported Walnut",
-        description: "Exotic Natural Walnut",
-      },
-      {
-        series: "Imported Walnut",
-        description: "Exotic Golden Walnut",
-      },
-      {
-        series: "Imported Walnut",
-        description: "Exotic Dark Walnut",
-      },
-      {
-        series: "Rosewood",
-        description: "Santos Rosewood",
-      },
-    ],
-  },
-  {
-    type: "Engineered Hardwood",
-    items: [
-      {
-        series: "Oak",
-        description: "Natural Oak",
-      },
-      {
-        series: "Maple",
-        description: "Cinnamon Maple",
-      },
-      {
-        series: "Hickory",
-        description: "Golden Hickory",
-      },
-      {
-        series: "Birch",
-        description: "Cherry Birch",
-      },
-    ],
-  },
-  {
-    type: "Laminate",
-    items: [
-      {
-        series: "Classic",
-        description: "Classic Oak",
-      },
-      {
-        series: "Elegance",
-        description: "Elegant Walnut",
-      },
-      {
-        series: "Modern",
-        description: "Modern Grey",
-      },
-      {
-        series: "Rustic",
-        description: "Rustic Pine",
-      },
-    ],
-  },
-  {
-    type: "Vinyl",
-    items: [
-      {
-        series: "Luxury",
-        description: "Luxury Oak",
-      },
-      {
-        series: "Premium",
-        description: "Premium Cherry",
-      },
-      {
-        series: "Classic",
-        description: "Classic Maple",
-      },
-      {
-        series: "Rustic",
-        description: "Rustic Pine",
-      },
-    ],
-  },
-  {
-    type: "Moulding",
-    items: [
-      {
-        series: "Baseboard",
-        description: "Baseboard Moulding",
-      },
-      {
-        series: "Crown",
-        description: "Crown Moulding",
-      },
-      {
-        series: "Chair Rail",
-        description: "Chair Rail Moulding",
-      },
-      {
-        series: "Shoe",
-        description: "Shoe Moulding",
-      },
-    ],
-  },
-];
+import styled from "styled-components";
+import { useRef, useState, useEffect } from "react";
 
-function getTypes() {
-  const types = mockData.map((data) => data.type);
-  return types;
-}
+import mouldingItems from "../data/mouldingItems.json";
+import vinylItems from "../data/vinylItems.json";
+import hardwoodItems from "../data/hardwoodItems.json";
+import laminatedItems from "../data/laminatedItems.json";
+import engineeredItems from "../data/engineeredItems.json";
 
-function getSeries(type) {
-  const items = mockData.filter((data) => data.type === type)[0].items;
-  const uniqueSeries = [...new Set(items.map((item) => item.series))];
-  return uniqueSeries;
-}
+const types = ["Moulding", "Vinyl", "Hardwood", "Laminated", "Engineered"];
+const getItemData = (type) => {
+  switch (type) {
+    case "Moulding":
+      return mouldingItems;
+    case "Vinyl":
+      return vinylItems;
+    case "Hardwood":
+      return hardwoodItems;
+    case "Laminated":
+      return laminatedItems;
+    case "Engineered":
+      return engineeredItems;
+    default:
+      return [];
+  }
+};
+const getCategories = (type) => {
+  const itemData = getItemData(type);
+  const categories = Array.from(
+    new Set(itemData.map((item, index) => item.category))
+  );
+  return categories;
+};
 
 function Catalog() {
-  const [type, setType] = useState(mockData[0].type);
-  const [series, setSeries] = useState("all");
-
-  const onTypeChange = (event) => {
-    setType(event.target.value);
-    setSeries("all");
-  };
-
-  const onSeriesChange = (event) => {
-    setSeries(event.target.value);
-  };
+  const [type, setType] = useState(types[0]);
+  const [category, setCategory] = useState("All Categories");
 
   return (
     <Container>
-      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="type-selector-label">Type</InputLabel>
-        <Select
-          labelId="type-selector-label"
-          id="type-selector"
-          label="Type"
-          defaultValue={mockData[0].type}
-          value={type}
-          onChange={onTypeChange}
-        >
-          {getTypes().map((type) => {
-            return (
-              <MenuItem key={type} value={type}>
-                {type}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
-      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="series-selector-label">Series</InputLabel>
-        <Select
-          labelId="series-selector-label"
-          id="series-selector"
-          label="Series"
-          value={series}
-          defaultValue={"all"}
-          onChange={onSeriesChange}
-        >
-          <MenuItem key="all" value="all">
-            All
-          </MenuItem>
-          {getSeries(type).map((series) => (
-            <MenuItem key={series} value={series}>
-              {series}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <NavBarContainer>
+        <span>
+          <img
+            src={logo}
+            alt="palladium-logo"
+            style={{ width: "150px", display: "block" }}
+          />
+        </span>
+        <Menu />
+      </NavBarContainer>
+      <ContentContianer>
+        {window.innerWidth > 768 ? (
+          <SelectDesktop
+            type={type}
+            types={types}
+            setCategory={setCategory}
+            category={category}
+            setType={setType}
+          />
+        ) : (
+          <SelectMobile
+            type={type}
+            types={types}
+            setCategory={setCategory}
+            category={category}
+            setType={setType}
+          />
+        )}
+      </ContentContianer>
     </Container>
   );
 }
 
 const Container = styled.div`
-  background-color: #f7f7f7;
   display: flex;
-  flex-directionL row;
+  flex-direction: column;
+`;
+
+const NavBarContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 1rem;
+  margin: 2rem;
+
+  @media (max-width: 768px) {
+    margin: 0.5rem;
+  }
+`;
+
+const ContentContianer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5rem;
+`;
+
+function SelectDesktop({ type, types, category, setType, setCategory }) {
+  const onTypeChange = (e) => {
+    setType(e.target.value);
+    setCategory("All Categories");
+  };
+  const onCategoryChange = (e) => {
+    setCategory(e.target.textContent);
+  };
+
+  return (
+    <SelectorContainer>
+      <TypeSelect
+        id="type-select"
+        value={type}
+        defaultValue={types[0]}
+        onChange={onTypeChange}
+      >
+        {types.map((type, index) => {
+          return (
+            <MenuItem key={index} value={type}>
+              {type.toUpperCase()}
+            </MenuItem>
+          );
+        })}
+      </TypeSelect>
+      <CategorySelect>
+        <CategoryOption
+          key="default"
+          value="All Categories"
+          onClick={onCategoryChange}
+          className={category === "All Categories" ? "selected" : null}
+        >
+          All Categories
+        </CategoryOption>
+        {getCategories(type).map((collection, index) => {
+          return (
+            <CategoryOption
+              key={index}
+              value={collection}
+              onClick={onCategoryChange}
+              className={category === `${collection}` ? "selected" : null}
+            >
+              {collection}
+            </CategoryOption>
+          );
+        })}
+      </CategorySelect>
+    </SelectorContainer>
+  );
+}
+
+const SelectorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: 768px) {
+    width: 25%;
+    max-width: 350px;
+    min-width: 300px;
+    gap: 20px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    display: grid;
+    grid-template-row: 1fr 1fr;
+  }
+`;
+
+const TypeSelect = styled(Select)`
+  width: 100%;
+
+  & .MuiSelect-outlined {
+    background-color: black;
+    border-radius: 0;
+  }
+
+  & .MuiSvgIcon-fontSizeMedium,
+  .MuiSelect-outlined {
+    color: white;
+  }
+`;
+
+const CategorySelect = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  max-height: 500px;
+  overflow-y: auto;
+`;
+
+const CategoryOption = styled.div`
+  @media (min-width: 768px) {
+    cursor: pointer;
+    margin-left: 2rem;
+
+    &:hover {
+      transform: translateY(-5px);
+      transition: transform 0.5s ease;
+    }
+
+    &:not(:hover) {
+      transform: translateY(0);
+      transition: transform 0.5s ease;
+    }
+
+    &.selected {
+      font-weight: bold;
+    }
+  }
+
+  @media (max-width: 768px) {
+    margin: 2rem;
+    font-size: 1rem;
+  }
+`;
+
+function SelectMobile({ type, types, setCategory, category, setType }) {
+  const divRef = useRef(null);
+  const [offsetTop, setOffsetTop] = useState(0); // Add this line
+
+  useEffect(() => {
+    if (divRef.current) {
+      const offsetTop = divRef.current.offsetTop;
+      setOffsetTop(offsetTop);
+    }
+  }, []);
+
+  const onTypeChange = (e, newValue) => {
+    setType(newValue);
+  };
+
+  return (
+    <SelectorContainer>
+      <StyledTabs value={type} onChange={onTypeChange} variant="scrollable">
+        {types.map((type, index) => {
+          return <Tab label={type} key={index} value={type} />;
+        })}
+      </StyledTabs>
+      <div
+        ref={divRef}
+        style={{
+          maxHeight: `calc(100vh - ${offsetTop}px)`,
+          overflowY: "auto",
+          "*::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
+      >
+        {getCategories(type).map((category, index) => {
+          return (
+            <CategoryOption
+              key={index}
+              onClick={() => {
+                console.log(category);
+              }}
+            >
+              {category}
+            </CategoryOption>
+          );
+        })}
+      </div>
+    </SelectorContainer>
+  );
+}
+
+const StyledTabs = styled(Tabs)`
+  & .MuiTabs-indicator {
+    backgroundcolor: black;
+  }
+
+  & .Mui-selected {
+    color: black;
+  }
+`;
+
+const GalleryContainer = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 export default Catalog;
