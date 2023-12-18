@@ -7,6 +7,8 @@ import Tab from "@mui/material/Tab";
 
 import styled from "styled-components";
 import { useRef, useState, useEffect } from "react";
+import { useQuery } from "react-query";
+import { getCatalogs } from "../services/api/CatalogApi";
 
 import mouldingItems from "../data/mouldingItems.json";
 import vinylItems from "../data/vinylItems.json";
@@ -43,6 +45,16 @@ function Catalog() {
   const [type, setType] = useState(types[0]);
   const [category, setCategory] = useState("All Categories");
 
+  const { data: catalog, isLoading, error } = useQuery("catalog", getCatalogs);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Something went wrong</p>;
+  }
+
   return (
     <Container>
       <NavBarContainer>
@@ -59,7 +71,7 @@ function Catalog() {
         {window.innerWidth > 768 ? (
           <SelectDesktop
             type={type}
-            types={types}
+            types={catalog}
             setCategory={setCategory}
             category={category}
             setType={setType}
@@ -67,7 +79,7 @@ function Catalog() {
         ) : (
           <SelectMobile
             type={type}
-            types={types}
+            types={catalog}
             setCategory={setCategory}
             category={category}
             setType={setType}
@@ -117,13 +129,13 @@ function SelectDesktop({ type, types, category, setType, setCategory }) {
       <TypeSelect
         id="type-select"
         value={type}
-        defaultValue={types[0]}
+        defaultValue={types[0].name}
         onChange={onTypeChange}
       >
         {types.map((type, index) => {
           return (
-            <MenuItem key={index} value={type}>
-              {type.toUpperCase()}
+            <MenuItem key={index} value={type.name} id={type.id}>
+              {type.name.toUpperCase()}
             </MenuItem>
           );
         })}
@@ -240,7 +252,7 @@ function SelectMobile({ type, types, setCategory, category, setType }) {
     <SelectorContainer>
       <StyledTabs value={type} onChange={onTypeChange} variant="scrollable">
         {types.map((type, index) => {
-          return <Tab label={type} key={index} value={type} />;
+          return <Tab label={type.name} key={index} value={type.name} />;
         })}
       </StyledTabs>
       <div
@@ -248,7 +260,7 @@ function SelectMobile({ type, types, setCategory, category, setType }) {
         style={{
           maxHeight: `calc(100vh - ${offsetTop}px)`,
           overflowY: "auto",
-          "*::-webkit-scrollbar": {
+          "*::WebkitScrollbar": {
             display: "none",
           },
         }}
