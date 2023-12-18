@@ -8,44 +8,40 @@ import Tab from "@mui/material/Tab";
 import styled from "styled-components";
 import { useRef, useState, useEffect } from "react";
 import { useQuery } from "react-query";
-import { getCatalogs } from "../services/api/CatalogApi";
-
-import mouldingItems from "../data/mouldingItems.json";
-import vinylItems from "../data/vinylItems.json";
-import hardwoodItems from "../data/hardwoodItems.json";
-import laminatedItems from "../data/laminatedItems.json";
-import engineeredItems from "../data/engineeredItems.json";
-
-const types = ["Moulding", "Vinyl", "Hardwood", "Laminated", "Engineered"];
-const getItemData = (type) => {
-  switch (type) {
-    case "Moulding":
-      return mouldingItems;
-    case "Vinyl":
-      return vinylItems;
-    case "Hardwood":
-      return hardwoodItems;
-    case "Laminated":
-      return laminatedItems;
-    case "Engineered":
-      return engineeredItems;
-    default:
-      return [];
-  }
-};
-const getCategories = (type) => {
-  const itemData = getItemData(type);
-  const categories = Array.from(
-    new Set(itemData.map((item, index) => item.category))
-  );
-  return categories;
-};
+import { getCatalogs, getCatalogCategories } from "../services/api/CatalogApi";
 
 function Catalog() {
-  const [type, setType] = useState(types[0]);
+  const [type, setType] = useState(null);
   const [category, setCategory] = useState("All Categories");
+  const [categoryOptions, setCategoryOptions] = useState([]);
 
   const { data: catalog, isLoading, error } = useQuery("catalog", getCatalogs);
+
+  const getCategories = async (catalogId) => {
+    const data = await getCatalogCategories(catalogId);
+    return data;
+  };
+
+  useEffect(() => {
+    const fetchCategoryOptions = async () => {
+      if (catalog) {
+        setType(catalog[0].id);
+      }
+    };
+
+    fetchCategoryOptions();
+  }, [catalog]);
+
+  useEffect(() => {
+    const fetchCategoryOptions = async () => {
+      if (type) {
+        const data = await getCategories(type);
+        setCategoryOptions(data);
+      }
+    };
+
+    fetchCategoryOptions();
+  }, [type]);
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -70,11 +66,11 @@ function Catalog() {
       <ContentContianer>
         {window.innerWidth > 768 ? (
           <SelectDesktop
-            type={type}
             types={catalog}
             setCategory={setCategory}
             category={category}
             setType={setType}
+            categoryOptions={categoryOptions}
           />
         ) : (
           <SelectMobile
@@ -83,6 +79,7 @@ function Catalog() {
             setCategory={setCategory}
             category={category}
             setType={setType}
+            categoryOptions={categoryOptions}
           />
         )}
       </ContentContianer>
@@ -115,7 +112,13 @@ const ContentContianer = styled.div`
   gap: 5rem;
 `;
 
-function SelectDesktop({ type, types, category, setType, setCategory }) {
+function SelectDesktop({
+  types,
+  category,
+  setType,
+  setCategory,
+  categoryOptions,
+}) {
   const onTypeChange = (e) => {
     setType(e.target.value);
     setCategory("All Categories");
@@ -128,13 +131,12 @@ function SelectDesktop({ type, types, category, setType, setCategory }) {
     <SelectorContainer>
       <TypeSelect
         id="type-select"
-        value={type}
-        defaultValue={types[0].name}
+        defaultValue={types[0].id}
         onChange={onTypeChange}
       >
         {types.map((type, index) => {
           return (
-            <MenuItem key={index} value={type.name} id={type.id}>
+            <MenuItem key={index} value={type.id}>
               {type.name.toUpperCase()}
             </MenuItem>
           );
@@ -149,7 +151,7 @@ function SelectDesktop({ type, types, category, setType, setCategory }) {
         >
           All Categories
         </CategoryOption>
-        {getCategories(type).map((collection, index) => {
+        {categoryOptions.map((collection, index) => {
           return (
             <CategoryOption
               key={index}
@@ -169,6 +171,7 @@ function SelectDesktop({ type, types, category, setType, setCategory }) {
 const SelectorContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px;
 
   @media (min-width: 768px) {
     width: 25%;
@@ -233,7 +236,14 @@ const CategoryOption = styled.div`
   }
 `;
 
-function SelectMobile({ type, types, setCategory, category, setType }) {
+function SelectMobile({
+  type,
+  types,
+  setCategory,
+  category,
+  setType,
+  categoryOptions,
+}) {
   const divRef = useRef(null);
   const [offsetTop, setOffsetTop] = useState(0); // Add this line
 
@@ -248,13 +258,19 @@ function SelectMobile({ type, types, setCategory, category, setType }) {
     setType(newValue);
   };
 
+  const onCategoryChange = (e, newValue) => {
+    setCategory(e.target.innerText);
+  };
+
   return (
     <SelectorContainer>
-      <StyledTabs value={type} onChange={onTypeChange} variant="scrollable">
-        {types.map((type, index) => {
-          return <Tab label={type.name} key={index} value={type.name} />;
-        })}
-      </StyledTabs>
+      {type && (
+        <StyledTabs value={type} onChange={onTypeChange} variant="scrollable">
+          {types.map((type, index) => {
+            return <Tab label={type.name} key={index} value={type.id} />;
+          })}
+        </StyledTabs>
+      )}
       <div
         ref={divRef}
         style={{
@@ -265,19 +281,15 @@ function SelectMobile({ type, types, setCategory, category, setType }) {
           },
         }}
       >
-        {getCategories(type).map((category, index) => {
+        {categoryOptions.map((category, index) => {
           return (
-            <CategoryOption
-              key={index}
-              onClick={() => {
-                console.log(category);
-              }}
-            >
+            <CategoryOption key={index} onClick={onCategoryChange}>
               {category}
             </CategoryOption>
           );
         })}
       </div>
+      ;
     </SelectorContainer>
   );
 }
@@ -290,11 +302,6 @@ const StyledTabs = styled(Tabs)`
   & .Mui-selected {
     color: black;
   }
-`;
-
-const GalleryContainer = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 
 export default Catalog;
