@@ -5,15 +5,22 @@ import MenuItem from "@mui/material/MenuItem";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
+import CatalogGallery from "./CatalogGallery";
+
 import styled from "styled-components";
 import { useRef, useState, useEffect } from "react";
 import { useQuery } from "react-query";
-import { getCatalogs, getCatalogCategories } from "../services/api/CatalogApi";
+import {
+  getCatalogs,
+  getCatalogCategories,
+  getItems,
+} from "../services/api/CatalogApi";
 
 function Catalog() {
   const [type, setType] = useState(null);
   const [category, setCategory] = useState("All Categories");
   const [categoryOptions, setCategoryOptions] = useState([]);
+  const [items, setItems] = useState([]);
 
   const { data: catalog, isLoading, error } = useQuery("catalog", getCatalogs);
 
@@ -37,6 +44,8 @@ function Catalog() {
       if (type) {
         const data = await getCategories(type);
         setCategoryOptions(data);
+        const items = await getItems(type);
+        setItems(items);
       }
     };
 
@@ -66,6 +75,7 @@ function Catalog() {
       <ContentContianer>
         {window.innerWidth > 768 ? (
           <SelectDesktop
+            type={type}
             types={catalog}
             setCategory={setCategory}
             category={category}
@@ -109,10 +119,11 @@ const NavBarContainer = styled.div`
 const ContentContianer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 5rem;
+  gap: 2rem;
 `;
 
 function SelectDesktop({
+  type,
   types,
   category,
   setType,
@@ -128,43 +139,46 @@ function SelectDesktop({
   };
 
   return (
-    <SelectorContainer>
-      <TypeSelect
-        id="type-select"
-        defaultValue={types[0].id}
-        onChange={onTypeChange}
-      >
-        {types.map((type, index) => {
-          return (
-            <MenuItem key={index} value={type.id}>
-              {type.name.toUpperCase()}
-            </MenuItem>
-          );
-        })}
-      </TypeSelect>
-      <CategorySelect>
-        <CategoryOption
-          key="default"
-          value="All Categories"
-          onClick={onCategoryChange}
-          className={category === "All Categories" ? "selected" : null}
+    <>
+      <SelectorContainer>
+        <TypeSelect
+          id="type-select"
+          defaultValue={types[0].id}
+          onChange={onTypeChange}
         >
-          All Categories
-        </CategoryOption>
-        {categoryOptions.map((collection, index) => {
-          return (
-            <CategoryOption
-              key={index}
-              value={collection}
-              onClick={onCategoryChange}
-              className={category === `${collection}` ? "selected" : null}
-            >
-              {collection}
-            </CategoryOption>
-          );
-        })}
-      </CategorySelect>
-    </SelectorContainer>
+          {types.map((type, index) => {
+            return (
+              <MenuItem key={index} value={type.id}>
+                {type.name.toUpperCase()}
+              </MenuItem>
+            );
+          })}
+        </TypeSelect>
+        <CategorySelect>
+          <CategoryOption
+            key="default"
+            value="All Categories"
+            onClick={onCategoryChange}
+            className={category === "All Categories" ? "selected" : null}
+          >
+            All Categories
+          </CategoryOption>
+          {categoryOptions.map((collection, index) => {
+            return (
+              <CategoryOption
+                key={index}
+                value={collection}
+                onClick={onCategoryChange}
+                className={category === `${collection}` ? "selected" : null}
+              >
+                {collection}
+              </CategoryOption>
+            );
+          })}
+        </CategorySelect>
+      </SelectorContainer>
+      <CatalogGallery type={type} types={types} category={category} />
+    </>
   );
 }
 
@@ -235,6 +249,7 @@ const CategoryOption = styled.div`
     font-size: 1rem;
   }
 `;
+
 
 function SelectMobile({
   type,
