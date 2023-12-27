@@ -10,17 +10,12 @@ import CatalogGallery from "./CatalogGallery";
 import styled from "styled-components";
 import { useRef, useState, useEffect } from "react";
 import { useQuery } from "react-query";
-import {
-  getCatalogs,
-  getCatalogCategories,
-  getItems,
-} from "../services/api/CatalogApi";
+import { getCatalogs, getCatalogCategories } from "../services/api/CatalogApi";
 
 function Catalog() {
   const [type, setType] = useState(null);
   const [category, setCategory] = useState("All Categories");
   const [categoryOptions, setCategoryOptions] = useState([]);
-  const [items, setItems] = useState([]);
 
   const { data: catalog, isLoading, error } = useQuery("catalog", getCatalogs);
 
@@ -44,8 +39,6 @@ function Catalog() {
       if (type) {
         const data = await getCategories(type);
         setCategoryOptions(data);
-        const items = await getItems(type);
-        setItems(items);
       }
     };
 
