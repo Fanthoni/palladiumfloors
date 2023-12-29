@@ -23,7 +23,7 @@ function Footer() {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
 
   background-color: black;
@@ -72,10 +72,6 @@ const CopyRightContainer = styled.div`
     }
   }
 `;
-
-// const CompanyLogoStyled = styled.img`
-//   width: 100px;
-// `;
 
 const ContactContainer = styled.div`
   display: flex;
