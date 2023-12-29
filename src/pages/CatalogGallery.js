@@ -4,73 +4,77 @@ import styled from "styled-components";
 import { getItems } from "../services/api/CatalogApi";
 import testGallery from "../assets/testGallery.jpg";
 
-function CatalogGallery(props) {
+function CatalogGallery({ type, types, category, withTitle }) {
   const [typeName, setTypeName] = useState(null);
   const [itemOptions, setItemOptions] = useState([]);
 
   useEffect(() => {
-    const name = getTypeName(props.type);
+    const name = getTypeName(type);
     setTypeName(name);
 
     const fetchItemsData = async () => {
-      const data = await getItems(props.type);
+      const data = await getItems(type);
       setItemOptions(data);
     };
-    props.type && fetchItemsData();
-  }, [props.type]);
+    type && fetchItemsData();
+  }, [type]);
 
-  const getTypeName = (typId) => {
-    if (props.types) {
-      const name = props.types.filter((type) => type.id === props.type)[0]
-        ?.name;
+  const getTypeName = (typeSelected) => {
+    if (types) {
+      const name = types.filter((type) => type.id === typeSelected)[0]?.name;
       return name;
     }
   };
 
   const getFilteredItems = () => {
-    if (props.category === "All Categories") {
+    if (category === "All Categories") {
       return itemOptions;
     } else {
-      const category = props.category;
+      const categorySelected = category;
       const filteredItems = itemOptions.filter(
-        (item) => item.category === category
+        (item) => item.category === categorySelected
       );
       return filteredItems;
     }
   };
 
   return (
-    <div>
-      <h2>
-        {typeName} - {props.category}
-      </h2>
+    <GalleryContainer>
+      {withTitle && (
+        <h2>
+          {typeName} - {category}
+        </h2>
+      )}
       <ItemsContainer>
         {getFilteredItems().map((item) => {
           return (
             <ItemCard key={item.id}>
-              <img
-                src={testGallery}
-                alt="test"
-                style={{ width: "200px", height: "200px" }}
-              />
+              <img src={testGallery} alt="test" style={{ width: "100%" }} />
               <p>{item.description}</p>
             </ItemCard>
           );
         })}
       </ItemsContainer>
-    </div>
+    </GalleryContainer>
   );
 }
+
+const GalleryContainer = styled.div`
+  margin: 2rem;
+  margin-top: 0;
+`;
 
 const ItemsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 2rem;
 `;
 
 const ItemCard = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1 1 150px;
+  max-width: 200px;
   cursor: pointer;
 
   & p {

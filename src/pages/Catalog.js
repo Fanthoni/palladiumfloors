@@ -4,6 +4,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import { Button } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import CatalogGallery from "./CatalogGallery";
 
@@ -170,7 +172,12 @@ function SelectDesktop({
           })}
         </CategorySelect>
       </SelectorContainer>
-      <CatalogGallery type={type} types={types} category={category} />
+      <CatalogGallery
+        type={type}
+        types={types}
+        category={category}
+        withTitle={true}
+      />
     </>
   );
 }
@@ -218,8 +225,9 @@ const CategorySelect = styled.div`
 `;
 
 const CategoryOption = styled.div`
+  cursor: pointer;
+
   @media (min-width: 768px) {
-    cursor: pointer;
     margin-left: 2rem;
 
     &:hover {
@@ -243,17 +251,17 @@ const CategoryOption = styled.div`
   }
 `;
 
-
 function SelectMobile({
   type,
   types,
-  setCategory,
   category,
+  setCategory,
   setType,
   categoryOptions,
 }) {
   const divRef = useRef(null);
-  const [offsetTop, setOffsetTop] = useState(0); // Add this line
+  const [offsetTop, setOffsetTop] = useState(0);
+  const [isCategorySelected, setIsCategorySelected] = useState(false);
 
   useEffect(() => {
     if (divRef.current) {
@@ -262,44 +270,85 @@ function SelectMobile({
     }
   }, []);
 
+  const getTypeName = (typeSelected) => {
+    if (types) {
+      const name = types.filter((type) => type.id === typeSelected)[0]?.name;
+      return name;
+    }
+  };
+
   const onTypeChange = (e, newValue) => {
     setType(newValue);
   };
 
-  const onCategoryChange = (e, newValue) => {
+  const onCategoryChange = (e) => {
     setCategory(e.target.innerText);
+    setIsCategorySelected(true);
   };
 
-  return (
-    <SelectorContainer>
-      {type && (
-        <StyledTabs value={type} onChange={onTypeChange} variant="scrollable">
-          {types.map((type, index) => {
-            return <Tab label={type.name} key={index} value={type.id} />;
-          })}
-        </StyledTabs>
-      )}
-      <div
-        ref={divRef}
-        style={{
-          maxHeight: `calc(100vh - ${offsetTop}px)`,
-          overflowY: "auto",
-          "*::WebkitScrollbar": {
-            display: "none",
-          },
-        }}
-      >
-        {categoryOptions.map((category, index) => {
-          return (
-            <CategoryOption key={index} onClick={onCategoryChange}>
-              {category}
-            </CategoryOption>
-          );
-        })}
-      </div>
-      ;
-    </SelectorContainer>
-  );
+  const onBackEvent = (e) => {
+    e.preventDefault();
+    setIsCategorySelected(false);
+  };
+
+  if (!isCategorySelected) {
+    return (
+      <SelectorContainer>
+        {type && (
+          <>
+            <StyledTabs
+              value={type}
+              onChange={onTypeChange}
+              variant="scrollable"
+            >
+              {types.map((type, index) => {
+                return <Tab label={type.name} key={index} value={type.id} />;
+              })}
+            </StyledTabs>
+            <div
+              ref={divRef}
+              style={{
+                maxHeight: `calc(100vh - ${offsetTop}px)`,
+                overflowY: "auto",
+                "*::WebkitScrollbar": {
+                  display: "none",
+                },
+              }}
+            >
+              {categoryOptions.map((category, index) => {
+                return (
+                  <CategoryOption key={index} onClick={onCategoryChange}>
+                    {category}
+                  </CategoryOption>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </SelectorContainer>
+    );
+  } else {
+    return (
+      <>
+        <GalleryContainer>
+          <TitleContainer>
+            <Button onClick={onBackEvent}>
+              <ArrowBackIcon />
+            </Button>
+            <h2>
+              {category} - {getTypeName(type)}
+            </h2>
+          </TitleContainer>
+          <CatalogGallery
+            type={type}
+            types={types}
+            category={category}
+            withTitle={false}
+          />
+        </GalleryContainer>
+      </>
+    );
+  }
 }
 
 const StyledTabs = styled(Tabs)`
@@ -310,6 +359,22 @@ const StyledTabs = styled(Tabs)`
   & .Mui-selected {
     color: black;
   }
+`;
+
+const GalleryContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+
+  gap: 1em;
+`;
+
+const TitleContainer = styled.div`
+  width: 90%;
+  gap: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export default Catalog;
