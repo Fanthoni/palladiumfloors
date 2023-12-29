@@ -50,7 +50,7 @@ const Container = styled.div`
 
 const CopyRightContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column-reverse;
   align-items: center;
   justify-content: center;
   gap: 5px;
@@ -76,7 +76,7 @@ const CopyRightContainer = styled.div`
 const ContactContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   gap: 10px;
 
