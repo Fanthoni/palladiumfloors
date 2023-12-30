@@ -3,10 +3,12 @@ import styled from "styled-components";
 
 import { getItems } from "../services/api/CatalogApi";
 import testGallery from "../assets/testGallery.jpg";
+import ItemDetail from "./ItemDetail";
 
 function CatalogGallery({ type, types, category, withTitle }) {
   const [typeName, setTypeName] = useState(null);
   const [itemOptions, setItemOptions] = useState([]);
+  const [itemSelected, setItemSelected] = useState(null);
 
   useEffect(() => {
     const name = getTypeName(type);
@@ -26,6 +28,11 @@ function CatalogGallery({ type, types, category, withTitle }) {
     }
   };
 
+  const onItemClick = (itemId) => {
+    const selectedItem = itemOptions.find((item) => item.id === itemId);
+    setItemSelected(selectedItem);
+  };
+
   const getFilteredItems = () => {
     if (category === "All Categories") {
       return itemOptions;
@@ -37,26 +44,41 @@ function CatalogGallery({ type, types, category, withTitle }) {
       return filteredItems;
     }
   };
-
-  return (
-    <GalleryContainer>
-      {withTitle && (
-        <h2>
-          {typeName} - {category}
-        </h2>
-      )}
-      <ItemsContainer>
-        {getFilteredItems().map((item) => {
-          return (
-            <ItemCard key={item.id}>
-              <img src={testGallery} alt="test" style={{ width: "100%" }} />
-              <p>{item.description}</p>
-            </ItemCard>
-          );
-        })}
-      </ItemsContainer>
-    </GalleryContainer>
-  );
+  if (!itemSelected) {
+    return (
+      <GalleryContainer>
+        {withTitle && (
+          <h2>
+            {typeName} - {category}
+          </h2>
+        )}
+        <ItemsContainer>
+          {getFilteredItems().map((item) => {
+            return (
+              <ItemCard
+                key={item.id}
+                onClick={() => {
+                  onItemClick(item.id);
+                }}
+              >
+                <img src={testGallery} alt="test" style={{ width: "100%" }} />
+                <p>{item.description}</p>
+              </ItemCard>
+            );
+          })}
+        </ItemsContainer>
+      </GalleryContainer>
+    );
+  } else {
+    return (
+      <ItemDetail
+        itemData={itemSelected}
+        onBackClickFn={() => {
+          setItemSelected(null);
+        }}
+      />
+    );
+  }
 }
 
 const GalleryContainer = styled.div`

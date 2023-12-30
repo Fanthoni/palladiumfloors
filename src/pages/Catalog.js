@@ -1,13 +1,13 @@
 import logo from "../assets/logo.png";
 import Menu from "../components/Menu";
+import CatalogGallery from "./CatalogGallery";
+
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
-import CatalogGallery from "./CatalogGallery";
 
 import styled from "styled-components";
 import { useRef, useState, useEffect } from "react";
