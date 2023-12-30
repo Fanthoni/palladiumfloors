@@ -56,14 +56,13 @@ function MenuBtn() {
         }}
       >
         {menuOptions.map((option) => (
-          <MenuItem key={option.label} onClick={handleClose}>
-            <UnstyledLink
-              to={option.path}
-              style={{ textDecoration: "none", color: "black" }}
-            >
-              {option.label}
-            </UnstyledLink>
-          </MenuItem>
+          <UnstyledLink
+            key={option.label}
+            to={option.path}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <MenuItem>{option.label}</MenuItem>
+          </UnstyledLink>
         ))}
       </Menu>
     </MenuBtnWrapper>
@@ -77,8 +76,10 @@ const MenuBtnWrapper = styled.div`
 `;
 
 const UnstyledLink = styled(Link)`
-    text-decoration: none;
-    color: black;
+  text-decoration: none;
+  color: black;
+  width: 100%;
+  padding: 0;
 `;
 
 export default MenuBtn;
