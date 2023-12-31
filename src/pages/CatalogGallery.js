@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { Button } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { getItems } from "../services/api/CatalogApi";
 import testGallery from "../assets/testGallery.jpg";
 import ItemDetail from "./ItemDetail";
 
-function CatalogGallery({ type, types, category, withTitle }) {
+function CatalogGallery({ type, types, category, onBackCallbackFn }) {
   const [typeName, setTypeName] = useState(null);
   const [itemOptions, setItemOptions] = useState([]);
   const [itemSelected, setItemSelected] = useState(null);
@@ -13,6 +15,7 @@ function CatalogGallery({ type, types, category, withTitle }) {
   useEffect(() => {
     const name = getTypeName(type);
     setTypeName(name);
+    setItemSelected(null);
 
     const fetchItemsData = async () => {
       const data = await getItems(type);
@@ -20,6 +23,10 @@ function CatalogGallery({ type, types, category, withTitle }) {
     };
     type && fetchItemsData();
   }, [type]);
+
+  useEffect(() => {
+    setItemSelected(null);
+  }, [category]);
 
   const getTypeName = (typeSelected) => {
     if (types) {
@@ -47,11 +54,20 @@ function CatalogGallery({ type, types, category, withTitle }) {
   if (!itemSelected) {
     return (
       <GalleryContainer>
-        {withTitle && (
+        <TitleContainer>
+          {onBackCallbackFn && (
+            <Button
+              onClick={() => {
+                onBackCallbackFn();
+              }}
+            >
+              <ArrowBackIcon />
+            </Button>
+          )}
           <h2>
             {typeName} - {category}
           </h2>
-        )}
+        </TitleContainer>
         <ItemsContainer>
           {getFilteredItems().map((item) => {
             return (
@@ -84,6 +100,13 @@ function CatalogGallery({ type, types, category, withTitle }) {
 const GalleryContainer = styled.div`
   margin: 2rem;
   margin-top: 0;
+`;
+
+const TitleContainer = styled.div`
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const ItemsContainer = styled.div`

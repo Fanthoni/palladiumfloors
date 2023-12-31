@@ -287,7 +287,6 @@ function SelectMobile({
   };
 
   const onBackEvent = (e) => {
-    e.preventDefault();
     setIsCategorySelected(false);
   };
 
@@ -331,19 +330,13 @@ function SelectMobile({
     return (
       <>
         <GalleryContainer>
-          <TitleContainer>
-            <Button onClick={onBackEvent}>
-              <ArrowBackIcon />
-            </Button>
-            <h2>
-              {category} - {getTypeName(type)}
-            </h2>
-          </TitleContainer>
           <CatalogGallery
             type={type}
             types={types}
             category={category}
-            withTitle={false}
+            onBackCallbackFn={() => {
+              onBackEvent();
+            }}
           />
         </GalleryContainer>
       </>
@@ -369,12 +362,6 @@ const GalleryContainer = styled.div`
   gap: 1em;
 `;
 
-const TitleContainer = styled.div`
-  width: 90%;
-  gap: 1rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
+
 
 export default Catalog;
