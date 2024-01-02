@@ -268,13 +268,6 @@ function SelectMobile({
     }
   }, []);
 
-  const getTypeName = (typeSelected) => {
-    if (types) {
-      const name = types.filter((type) => type.id === typeSelected)[0]?.name;
-      return name;
-    }
-  };
-
   const onTypeChange = (e, newValue) => {
     setType(newValue);
   };

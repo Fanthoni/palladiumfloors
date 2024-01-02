@@ -6,6 +6,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useQuery } from "react-query";
 
 import ItemSpec from "../services/models/ItemSpecifications";
+import { postItemThubmnail } from "../services/api/CatalogApi";
 
 function ItemDetail({ itemData, onBackClickFn }) {
   const {
@@ -16,16 +17,18 @@ function ItemDetail({ itemData, onBackClickFn }) {
     return await ItemSpec.getSpecs(itemData.catalogId);
   });
 
-  const handleImageUpload = (event) => {
-    console.log(event.target.files);
+  const handleThumbnailUpload = (event) => {
     const file = event.target.files[0];
-    // call API to update item thumbnail
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      postItemThubmnail(itemData.id, reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
-  const handleThumbnailUpload = (event) => {
+  const handleImageUpload = (event) => {
     console.log(event.target.files);
     const files = event.target.files;
-    // call API to update item photos
   };
 
   return (

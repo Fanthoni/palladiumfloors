@@ -41,3 +41,17 @@ export const getItems = async (catalogId) => {
   );
   return data;
 };
+
+export const postItemThubmnail = async (itemId, file) => {
+  const request = {
+    ItemId: itemId,
+    Image: file,
+  };
+
+  const { data } = await axios.post(
+    `${process.env.REACT_APP_API_BASE_URL}/catalog/item/thumbnail`,
+    request
+  );
+
+  return data;
+};

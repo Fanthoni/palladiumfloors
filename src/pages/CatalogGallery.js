@@ -22,6 +22,7 @@ function CatalogGallery({ type, types, category, onBackCallbackFn }) {
       setItemOptions(data);
     };
     type && fetchItemsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
   useEffect(() => {
