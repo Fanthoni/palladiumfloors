@@ -1,3 +1,4 @@
+import { getCatalogs } from "../api/CatalogApi";
 class ItemSpec {
   static validItemTypes = [
     "MOULDING",
@@ -7,11 +8,26 @@ class ItemSpec {
     "ENGINEERED",
   ];
 
-  static getSpecs(itemType) {
-    if (this.validItemTypes.includes(itemType.toUpperCase())) {
-      switch (itemType.toUpperCase()) {
+  static getCatalogName = async (catalogId) => {
+    const catalogs = await getCatalogs();
+
+    function getCatalogIds() {
+      return catalogs.map((catalog) => catalog.id);
+    }
+    if (catalogs && getCatalogIds().includes(catalogId)) {
+      return catalogs.filter((catalog) => catalog.id === catalogId)[0].name;
+    } else {
+      return null;
+    }
+  };
+
+  static async getSpecs(itemType) {
+    const catalogName = await this.getCatalogName(itemType);
+
+    if (catalogName) {
+      switch (catalogName.toUpperCase()) {
         case "MOULDING":
-          return this.getMoudlingSpecsSpecs();
+          return this.getMoudlingSpecs();
         case "VINYL":
           return this.getVinylSpecs();
         case "HARDWOOD":
@@ -26,7 +42,7 @@ class ItemSpec {
     }
   }
 
-  static getMoudlingSpecsSpecs() {
+  static getMoudlingSpecs() {
     return {
       dimension: "Dimension",
       thickness: "Thickness",

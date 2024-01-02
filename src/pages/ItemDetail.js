@@ -3,10 +3,19 @@ import imageTest from "../assets/testGallery.jpg";
 
 import { Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useQuery } from "react-query";
 
 import ItemSpec from "../services/models/ItemSpecifications";
 
 function ItemDetail({ itemData, onBackClickFn }) {
+  const {
+    data: specs,
+    isLoading,
+    error,
+  } = useQuery("getSpecs", async () => {
+    return await ItemSpec.getSpecs(itemData.catalogId);
+  });
+
   const handleImageUpload = (event) => {
     console.log(event.target.files);
     const file = event.target.files[0];
@@ -58,10 +67,9 @@ function ItemDetail({ itemData, onBackClickFn }) {
         </PhotoBookContainer>
         <SpecificationsContainer>
           <h3>Specifications</h3>
-          <ItemSpecs
-            fields={ItemSpec.getSpecs(itemData.catalog)}
-            data={itemData}
-          />
+          {error && <p>Something went wrong</p>}
+          {isLoading && <p>Loading...</p>}
+          {specs ? <ItemSpecs fields={specs} data={itemData} /> : null}
         </SpecificationsContainer>
       </ContentContainer>
     </Container>

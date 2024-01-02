@@ -1,14 +1,19 @@
 import axios from "axios";
+import LocalStorage from "../utils/localStorage";
 
 /**
  * Retrieves catalogs from the API.
  * @returns {Promise<Array>} A promise that resolves to an array of catalogs.
  */
 export const getCatalogs = async () => {
-  const { data } = await axios.get(
-    `${process.env.REACT_APP_API_BASE_URL}/catalog`
-  );
-  return data;
+  if (!LocalStorage.getItem("catalogs")) {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/catalog`
+    );
+    LocalStorage.setItem("catalogs", JSON.stringify(data));
+  }
+
+  return JSON.parse(LocalStorage.getItem("catalogs"));
 };
 
 /**
