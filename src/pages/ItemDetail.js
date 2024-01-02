@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import imageTest from "../assets/testGallery.jpg";
 
 import { Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -6,6 +7,18 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ItemSpec from "../services/models/ItemSpecifications";
 
 function ItemDetail({ itemData, onBackClickFn }) {
+  const handleImageUpload = (event) => {
+    console.log(event.target.files);
+    const file = event.target.files[0];
+    // call API to update item thumbnail
+  };
+
+  const handleThumbnailUpload = (event) => {
+    console.log(event.target.files);
+    const files = event.target.files;
+    // call API to update item photos
+  };
+
   return (
     <Container>
       <HeaderContainer>
@@ -15,7 +28,34 @@ function ItemDetail({ itemData, onBackClickFn }) {
         <h2>{itemData.description}</h2>
       </HeaderContainer>
       <ContentContainer>
-        <PhotoBookContainer></PhotoBookContainer>
+        <PhotoBookContainer>
+          <img src={imageTest} alt="gallery" />
+          <input
+            accept="image/*"
+            style={{ display: "none" }}
+            id="raised-button-file"
+            type="file"
+            onChange={handleThumbnailUpload}
+          />
+          <label htmlFor="raised-button-file">
+            <Button variant="raised" component="span">
+              Upload Thumbnail
+            </Button>
+          </label>
+          <input
+            accept="image/*"
+            style={{ display: "none" }}
+            id="raised-button-file"
+            type="file"
+            multiple
+            onChange={handleImageUpload}
+          />
+          <label htmlFor="raised-button-file">
+            <Button variant="raised" component="span">
+              Upload Pictures
+            </Button>
+          </label>
+        </PhotoBookContainer>
         <SpecificationsContainer>
           <h3>Specifications</h3>
           <ItemSpecs
@@ -43,12 +83,19 @@ const HeaderContainer = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
 `;
 
-const PhotoBookContainer = styled.div``;
+const PhotoBookContainer = styled.div`
+  width: 100%;
+
+  & img {
+    width: 100%;
+  }
+  text-align: center;
+`;
 
 const SpecificationsContainer = styled.div`
   display: flex;
