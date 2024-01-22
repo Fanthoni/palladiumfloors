@@ -13,7 +13,6 @@ function ImageCarousel() {
     const updateParentWidth = () => {
       if (parentThumbnailRef.current) {
         const width = parentThumbnailRef.current.offsetWidth;
-        console.log(width);
         setParentThumbnailWidth(width);
       }
     };
@@ -49,17 +48,14 @@ function ImageCarousel() {
   };
 
   const onClickFromMiniThumbnail = (imgIndex) => {
-    setCarousel(true);
     setCurrImgIndex(imgIndex);
   };
 
   const onOpen = (e) => {
-    e.preventDefault();
     setCarousel(true);
   };
 
   const onClose = (e) => {
-    e.preventDefault();
     setCarousel(false);
   };
 
@@ -108,6 +104,8 @@ function ImageCarousel() {
         showImgCount={true}
         onClickPrev={onClickPrevArrow}
         onClickNext={onClickNextArrow}
+        width={500}
+        backdropCloseable={true}
       />
     </>
   );
@@ -133,9 +131,6 @@ const MiniThumbnailCarousel = styled.div`
   justify-content: space-betweeen;
 
   gap: 0.5rem;
-  &::-webkit-scrollbar {
-    display: none;
-  }
 `;
 
 export default ImageCarousel;

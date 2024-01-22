@@ -40,9 +40,8 @@ function ItemDetail({ itemData, onBackClickFn }) {
         <h2>{itemData.description}</h2>
       </HeaderContainer>
       <ContentContainer>
-        <PhotoBookContainer>
-          <ImageCarousel />
-          {/* <input
+        <ImageCarousel />
+        {/* <input
             accept="image/*"
             style={{ display: "none" }}
             id="raised-button-file"
@@ -67,7 +66,6 @@ function ItemDetail({ itemData, onBackClickFn }) {
               Upload Pictures
             </Button>
           </label> */}
-        </PhotoBookContainer>
         <SpecificationsContainer>
           <h3>Specifications</h3>
           {error && <p>Something went wrong</p>}
@@ -82,6 +80,7 @@ function ItemDetail({ itemData, onBackClickFn }) {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 5rem;
 `;
 
 const HeaderContainer = styled.div`
@@ -94,18 +93,13 @@ const HeaderContainer = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: row;
   gap: 2rem;
-`;
 
-const PhotoBookContainer = styled.div`
-  width: 100%;
-
-  & img {
-    width: 100%;
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
-  text-align: center;
 `;
 
 const SpecificationsContainer = styled.div`
