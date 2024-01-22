@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import imageTest from "../assets/testGallery.jpg";
 
 import { Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useQuery } from "react-query";
+import ImageCarousel from "../components/ImageCarousel";
 
 import ItemSpec from "../services/models/ItemSpecifications";
 import { postItemThubmnail } from "../services/api/CatalogApi";
@@ -41,8 +41,8 @@ function ItemDetail({ itemData, onBackClickFn }) {
       </HeaderContainer>
       <ContentContainer>
         <PhotoBookContainer>
-          <img src={imageTest} alt="gallery" />
-          <input
+          <ImageCarousel />
+          {/* <input
             accept="image/*"
             style={{ display: "none" }}
             id="raised-button-file"
@@ -66,7 +66,7 @@ function ItemDetail({ itemData, onBackClickFn }) {
             <Button variant="raised" component="span">
               Upload Pictures
             </Button>
-          </label>
+          </label> */}
         </PhotoBookContainer>
         <SpecificationsContainer>
           <h3>Specifications</h3>
