@@ -132,7 +132,7 @@ function SelectDesktop({
   };
 
   return (
-    <>
+    <PageContainer>
       <SelectorContainer>
         <TypeSelect
           id="type-select"
@@ -176,9 +176,16 @@ function SelectDesktop({
         category={category}
         withTitle={true}
       />
-    </>
+    </PageContainer>
   );
 }
+
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  margin-right: 1rem;
+`;
 
 const SelectorContainer = styled.div`
   display: flex;
@@ -348,7 +355,7 @@ const StyledTabs = styled(Tabs)`
 const GalleryContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 2rem;
+  padding: 1rem;
 
   gap: 1em;
 `;

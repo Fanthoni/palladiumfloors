@@ -65,9 +65,9 @@ function CatalogGallery({ type, types, category, onBackCallbackFn }) {
               <ArrowBackIcon />
             </Button>
           )}
-          <h2>
+          <Title>
             {typeName} - {category}
-          </h2>
+          </Title>
         </TitleContainer>
         <ItemsContainer>
           {getFilteredItems().map((item) => {
@@ -99,7 +99,7 @@ function CatalogGallery({ type, types, category, onBackCallbackFn }) {
 }
 
 const GalleryContainer = styled.div`
-  margin: 2rem;
+  margin: 0rem;
   margin-top: 0;
 `;
 
@@ -108,6 +108,15 @@ const TitleContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
+
+const Title = styled.h2`
+  :root {
+    --min-font-size: 16px;
+    --max-font-size: 46px;
+  }
+
+  font-size: clamp(20px, 4vw, 30px);
 `;
 
 const ItemsContainer = styled.div`
@@ -119,8 +128,8 @@ const ItemsContainer = styled.div`
 const ItemCard = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1 1 150px;
-  max-width: 200px;
+  flex: 1 1 120px;
+  max-width: 150px;
   cursor: pointer;
 
   & p {
