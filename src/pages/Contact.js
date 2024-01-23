@@ -1,10 +1,46 @@
+import { useState, useRef } from "react";
 import styled from "styled-components";
 import Menu from "../components/Menu";
-import background from "../assets/contactImages/background.png";
 import { TextInput, Button } from "../components/FormComponent";
+import { Snackbar, Alert } from "@mui/material";
+
+import background from "../assets/contactImages/background.png";
 import contactImg from "../assets/contactImages/contact.png";
 
+import { sendMail } from "../services/api/MailApi";
+
 function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    inquiry: "",
+  });
+  const formRef = useRef(null);
+  const [successSnackbar, setSuccessSnackbar] = useState(false);
+  const [errorSnackbar, setErrorSnackbar] = useState(false);
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await sendMail(formData.name, formData.email, formData.inquiry);
+      formRef.current.reset();
+      setSuccessSnackbar(true);
+    } catch (e) {
+      console.error(`Error when sending message: ${e}`);
+      setErrorSnackbar(true);
+    }
+
+    return;
+  };
+
   return (
     <Container>
       <PageContainer>
@@ -20,24 +56,30 @@ function Contact() {
             <h1>Contact Us</h1>
             <Menu />
           </div>
-          {/* <form> */}
-          <TextInput.TextBox
-            displayName="Name"
-            fieldName="name"
-            isRequired={true}
-          />
-          <TextInput.TextBox
-            displayName="Email"
-            fieldName="email"
-            isRequired={true}
-          />
-          <TextInput.TextArea
-            displayName="Inquiry"
-            fieldName="inquiry"
-            isRequired={true}
-          />
-          <Button.SubmitButton />
-          {/* </form> */}
+          <Form onSubmit={onSubmit} ref={formRef}>
+            <TextInput.TextBox
+              displayName="Name"
+              fieldName="name"
+              isRequired={true}
+              value={formData.name}
+              onChange={handleInputChange}
+            />
+            <TextInput.EmailTextBox
+              displayName="Email"
+              fieldName="email"
+              isRequired={true}
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            <TextInput.TextArea
+              displayName="Inquiry"
+              fieldName="inquiry"
+              isRequired={true}
+              value={formData.inquiry}
+              onChange={handleInputChange}
+            />
+            <Button.SubmitButton style={{ marginTop: "2rem" }} />
+          </Form>
         </FormContainer>
         <BusinessInfoContainer>
           <h3>phone</h3>
@@ -48,6 +90,28 @@ function Contact() {
           <p>California, USA</p>
         </BusinessInfoContainer>
       </PageContainer>
+      <Snackbar
+        open={successSnackbar || errorSnackbar}
+        autoHideDuration={5000}
+        onClose={() => {
+          setErrorSnackbar(false);
+          setSuccessSnackbar(false);
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setErrorSnackbar(false);
+            setSuccessSnackbar(false);
+          }}
+          severity={errorSnackbar ? "error" : "success"}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {errorSnackbar
+            ? "Error when sending message"
+            : "Message has been sent!"}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
@@ -104,6 +168,12 @@ const FormContainer = styled.div`
   @media (max-width: 768px) {
     width: 100%;
   }
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const BusinessInfoContainer = styled.div`

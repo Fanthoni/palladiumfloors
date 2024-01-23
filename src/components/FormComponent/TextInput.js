@@ -1,6 +1,12 @@
 import "./TextInput.css";
 
-function TextBox({ displayName, fieldName, isRequired = false, ...props }) {
+function TextBox({
+  displayName,
+  fieldName,
+  type = "text",
+  isRequired = false,
+  ...props
+}) {
   return (
     <div {...props}>
       <label htmlFor={fieldName}>
@@ -8,12 +14,29 @@ function TextBox({ displayName, fieldName, isRequired = false, ...props }) {
       </label>
       <input
         className="roundCorner"
-        type="text"
+        type={type}
         name={fieldName}
         id={fieldName}
         required={isRequired ?? false}
       />
     </div>
+  );
+}
+
+function EmailTextBox({
+  displayName,
+  fieldName,
+  isRequired = false,
+  ...props
+}) {
+  return (
+    <TextBox
+      displayName={displayName}
+      fieldName={fieldName}
+      type="email"
+      isRequired={isRequired}
+      {...props}
+    />
   );
 }
 
@@ -39,6 +62,7 @@ function TextArea({
   fieldName,
   isRequired = false,
   maxLength = "1024",
+  minLength = "50",
   ...props
 }) {
   return (
@@ -51,6 +75,7 @@ function TextArea({
         type="text"
         name={fieldName}
         id={fieldName}
+        minLength={minLength}
         maxLength={maxLength}
         required={isRequired ?? false}
       />
@@ -58,4 +83,4 @@ function TextArea({
   );
 }
 
-export { TextBox, NumericalTextBox, TextArea };
+export { TextBox, NumericalTextBox, TextArea, EmailTextBox };
